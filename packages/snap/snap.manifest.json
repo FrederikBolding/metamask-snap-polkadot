@@ -1,0 +1,25 @@
+{
+  "version": "0.3.0",
+  "proposedName": "Polkadot Snap",
+  "description": "Polkadot Snap",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/chainsafe/metamask-snap-polkadot.git"
+  },
+  "source": {
+    "shasum": "OcuItGJCS2brr1guAZUouT93s8xqRcDX5Llp9QhwDPA=",
+    "location": {
+      "npm": {
+        "filePath": "dist/bundle.js",
+        "packageName": "polkadot-snap",
+        "registry": "https://registry.npmjs.org/"
+      }
+    }
+  },
+  "initialPermissions": {
+    "snap_confirm": {},
+    "snap_manageState": {},
+    "wallet_manageAssets": {}
+  },
+  "manifestVersion": "0.1"
+}
