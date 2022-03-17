@@ -1,7 +1,7 @@
 import ApiPromise from "@polkadot/api/promise";
-import {WsProvider} from "@polkadot/api";
-import {Wallet} from "../interfaces";
-import {getConfiguration} from "../configuration";
+import { WsProvider } from "@polkadot/api";
+import { Wallet } from "../interfaces";
+import { getConfiguration } from "../configuration";
 
 let api: ApiPromise;
 let provider: WsProvider;
@@ -18,10 +18,10 @@ async function initApi(wsRpcUrl: string): Promise<ApiPromise> {
     // this seems not to make any difference anymore
     types: {
       RuntimeDbWeight: {
-        read: 'Weight',
-        write: 'Weight'
-      }
-    }
+        read: "Weight",
+        write: "Weight",
+      },
+    },
   });
 
   console.log("Api is ready");
@@ -43,12 +43,12 @@ export const resetApi = (): void => {
 export const getApi = async (wallet: Wallet): Promise<ApiPromise> => {
   if (!api) {
     // api not initialized or configuration changed
-    const config = getConfiguration(wallet);
+    const config = await getConfiguration(wallet);
     api = await initApi(config.wsRpcUrl);
     isConnecting = false;
   } else {
     while (isConnecting) {
-      await new Promise(r => setTimeout(r, 100));
+      await new Promise((r) => setTimeout(r, 100));
     }
     if (!provider.isConnected()) {
       isConnecting = true;
