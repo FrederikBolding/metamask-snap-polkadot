@@ -310,7 +310,7 @@
     async function connectSnap () {
       console.log(snapId);
       try {
-        await ethereum.send({
+        await ethereum.request({
           method: 'wallet_enable',
           params: [{
             [snapId]: {}

@@ -96,7 +96,7 @@ export interface WalletEnableRequest {
 }
 
 export interface GetPluginsRequest {
-  method: "wallet_getPlugins";
+  method: "wallet_getSnaps";
 }
 
 export interface SnapRpcMethodRequest {

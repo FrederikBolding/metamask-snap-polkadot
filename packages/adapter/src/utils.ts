@@ -1,4 +1,3 @@
-
 export function hasMetaMask(): boolean {
   if (!window.ethereum) {
     return false;
@@ -6,13 +5,20 @@ export function hasMetaMask(): boolean {
   return window.ethereum.isMetaMask;
 }
 
-export async function installPolkadotSnap(pluginOrigin: string): Promise<boolean> {
+export async function installPolkadotSnap(
+  pluginOrigin: string
+): Promise<boolean> {
   try {
-    await window.ethereum.send({
-      method: 'wallet_enable',
-      params: [{
-        [pluginOrigin]: {}
-      }]
+    await window.ethereum.request({
+      method: "wallet_enable",
+      params: [
+        {
+          // eslint-disable-next-line @typescript-eslint/camelcase
+          wallet_snap: {
+            [pluginOrigin]: {},
+          },
+        },
+      ],
     });
     return true;
   } catch (e) {
@@ -21,12 +27,16 @@ export async function installPolkadotSnap(pluginOrigin: string): Promise<boolean
   }
 }
 
-export async function isPolkadotSnapInstalled(pluginOrigin: string): Promise<boolean> {
+export async function isPolkadotSnapInstalled(
+  pluginOrigin: string
+): Promise<boolean> {
   try {
-    const result = await window.ethereum.send({
-      method: 'wallet_getPlugins',
-    }) as {[k: string]: {permissionName: string}};
-    return !!Object.values(result).find((permission) => permission.permissionName === pluginOrigin);
+    const result = (await window.ethereum.request({
+      method: "wallet_getSnaps",
+    })) as { [k: string]: { permissionName: string } };
+    return !!Object.values(result).find(
+      (permission) => permission.permissionName === pluginOrigin
+    );
   } catch (e) {
     console.log("Failed to obtain installed plugins", e);
     return false;

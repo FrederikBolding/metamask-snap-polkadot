@@ -1,6 +1,10 @@
-import {Injected, InjectedAccount, InjectedAccounts} from "@polkadot/extension-inject/types";
-import {Signer as InjectedSigner, SignerResult} from '@polkadot/api/types';
-import {SignerPayloadJSON, SignerPayloadRaw} from '@polkadot/types/types';
+import {
+  Injected,
+  InjectedAccount,
+  InjectedAccounts,
+} from "@polkadot/extension-inject/types";
+import { Signer as InjectedSigner, SignerResult } from "@polkadot/api/types";
+import { SignerPayloadJSON, SignerPayloadRaw } from "@polkadot/types/types";
 import {
   exportSeed,
   generateTransactionPayload,
@@ -14,19 +18,18 @@ import {
   signPayloadJSON,
   signPayloadRaw,
 } from "./methods";
-import {SnapConfig} from "@chainsafe/metamask-polkadot-types";
-import {MetamaskSnapApi} from "./types";
-import {isPolkadotSnapInstalled} from "./utils";
-import {getEventApi} from "./api";
+import { SnapConfig } from "@chainsafe/metamask-polkadot-types";
+import { MetamaskSnapApi } from "./types";
+import { isPolkadotSnapInstalled } from "./utils";
+import { getEventApi } from "./api";
 
 export class MetamaskPolkadotSnap implements Injected {
-
   public accounts: InjectedAccounts = {
     get: async () => {
       const account: InjectedAccount = {
         address: await getAddress.bind(this)(),
         genesisHash: null,
-        name: "Metamask account"
+        name: "Metamask account",
       };
       return [account];
     },
@@ -34,7 +37,7 @@ export class MetamaskPolkadotSnap implements Injected {
       return (): void => {
         throw "unsupported method";
       };
-    }
+    },
   };
 
   public signer: InjectedSigner = {
@@ -42,39 +45,43 @@ export class MetamaskPolkadotSnap implements Injected {
       const signature = await signPayloadJSON.bind(this)(payload);
       const id = this.requestCounter;
       this.requestCounter += 1;
-      return {id, signature};
+      return { id, signature };
     },
     signRaw: async (raw: SignerPayloadRaw): Promise<SignerResult> => {
       const signature = await signPayloadRaw.bind(this)(raw);
       const id = this.requestCounter;
       this.requestCounter += 1;
-      return {id, signature};
+      return { id, signature };
     },
-    update: () => null
+    update: () => null,
   };
 
   protected readonly config: SnapConfig;
   //url to package.json
   protected readonly pluginOrigin: string;
-  //pluginOrigin prefixed with wallet_plugin_
   protected readonly snapId: string;
 
   private requestCounter: number;
 
   public constructor(pluginOrigin: string, config: SnapConfig) {
     this.pluginOrigin = pluginOrigin;
-    this.snapId = "wallet_plugin_" + this.pluginOrigin;
-    this.config = config || {networkName: "westend"};
+    this.snapId = this.pluginOrigin;
+    this.config = config || { networkName: "westend" };
     this.requestCounter = 0;
   }
 
   public enableSnap = async (): Promise<Injected> => {
-    if(!(await isPolkadotSnapInstalled(this.snapId))) {
-      await window.ethereum.send({
+    if (!(await isPolkadotSnapInstalled(this.snapId))) {
+      await window.ethereum.request({
         method: "wallet_enable",
-        params: [{
-          [this.snapId]: {}
-        }]
+        params: [
+          {
+            // eslint-disable-next-line @typescript-eslint/camelcase
+            wallet_snap: {
+              [this.snapId]: {},
+            },
+          },
+        ],
       });
       await setConfiguration.bind(this)(this.config);
     }
