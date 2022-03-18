@@ -1,6 +1,6 @@
-import {Wallet} from "../../interfaces";
-import ApiPromise from "@polkadot/api/promise";
-import {getKeyPair} from "../../polkadot/account";
+import { Wallet } from "../../interfaces";
+import { ApiPromise } from "@polkadot/api/promise";
+import { getKeyPair } from "../../polkadot/account";
 
 /**
  * Returns balance as BN
@@ -8,10 +8,15 @@ import {getKeyPair} from "../../polkadot/account";
  * @param api
  * @param address
  */
-export async function getBalance(wallet: Wallet, api: ApiPromise, address?: string): Promise<string> {
-  if(!address) {
+export async function getBalance(
+  wallet: Wallet,
+  api: ApiPromise,
+  address?: string
+): Promise<string> {
+  if (!address) {
     address = (await getKeyPair(wallet)).address;
   }
   const account = await api.query.system.account(address);
+  // @ts-expect-error Ignore for now
   return account.data.free.toString();
 }

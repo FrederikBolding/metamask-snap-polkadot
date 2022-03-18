@@ -1,16 +1,22 @@
-import ApiPromise from "@polkadot/api/promise";
-import {BlockId, BlockInfo} from "@chainsafe/metamask-polkadot-types";
-import { BlockHash } from '@polkadot/types/interfaces/chain';
+import { ApiPromise } from "@polkadot/api/promise";
+import { BlockId, BlockInfo } from "@chainsafe/metamask-polkadot-types";
+import { BlockHash } from "@polkadot/types/interfaces/chain";
 
-async function _getBlock(blockHash: BlockHash|string, api: ApiPromise): Promise<BlockInfo> {
+async function _getBlock(
+  blockHash: BlockHash | string,
+  api: ApiPromise
+): Promise<BlockInfo> {
   const signedBlock = await api.rpc.chain.getBlock(blockHash);
   return {
     hash: signedBlock.block.hash.toHex(),
-    number: signedBlock.block.header.number.toString()
+    number: signedBlock.block.header.number.toString(),
   };
 }
 
-async function _getBlockById(blockId: number, api: ApiPromise): Promise<BlockInfo | null> {
+async function _getBlockById(
+  blockId: number,
+  api: ApiPromise
+): Promise<BlockInfo | null> {
   const blockHash = await api.rpc.chain.getBlockHash(blockId);
   if (!blockHash.isEmpty) {
     return await _getBlock(blockHash, api);
@@ -29,7 +35,10 @@ async function _getBlockById(blockId: number, api: ApiPromise): Promise<BlockInf
  * @param blockTag
  * @param api
  */
-export async function getBlock(blockTag: BlockId, api: ApiPromise): Promise<BlockInfo | null> {
+export async function getBlock(
+  blockTag: BlockId,
+  api: ApiPromise
+): Promise<BlockInfo | null> {
   switch (typeof blockTag) {
     case "number":
       // get block by id sent as number
@@ -52,5 +61,3 @@ export async function getBlock(blockTag: BlockId, api: ApiPromise): Promise<Bloc
   }
   return null;
 }
-
-

@@ -3,7 +3,7 @@ import { getPublicKey } from "./rpc/getPublicKey";
 import { exportSeed } from "./rpc/exportSeed";
 import { getBalance } from "./rpc/substrate/getBalance";
 import { getAddress } from "./rpc/getAddress";
-import ApiPromise from "@polkadot/api/promise";
+import { ApiPromise } from "@polkadot/api/promise";
 import { getTransactions } from "./rpc/substrate/getTransactions";
 import { getBlock } from "./rpc/substrate/getBlock";
 import { updateAsset } from "./asset";

@@ -1,29 +1,38 @@
-import ApiPromise from "@polkadot/api/promise";
-import {Wallet} from "../interfaces";
-import {getAddress} from "./getAddress";
-import {SubmittableExtrinsic} from "@polkadot/api/types";
-import {TxPayload} from "@chainsafe/metamask-polkadot-types";
+import { ApiPromise } from "@polkadot/api/promise";
+import { Wallet } from "../interfaces";
+import { getAddress } from "./getAddress";
+import { SubmittableExtrinsic } from "@polkadot/api/types";
+import { TxPayload } from "@chainsafe/metamask-polkadot-types";
 
 export async function generateTransactionPayload(
-  wallet: Wallet, api: ApiPromise, to: string, amount: string | number
+  wallet: Wallet,
+  api: ApiPromise,
+  to: string,
+  amount: string | number
 ): Promise<TxPayload> {
   // fetch last signed block and account address
-  const [signedBlock, address] = await Promise.all([api.rpc.chain.getBlock(), getAddress(wallet)]);
+  const [signedBlock, address] = await Promise.all([
+    api.rpc.chain.getBlock(),
+    getAddress(wallet),
+  ]);
   // create signer options
   const nonce = (await api.derive.balances.account(address)).accountNonce;
   const signerOptions = {
     blockHash: signedBlock.block.header.hash,
-    era: api.createType('ExtrinsicEra', {
+    era: api.createType("ExtrinsicEra", {
       current: signedBlock.block.header.number,
-      period: 50
+      period: 50,
     }),
-    nonce
+    nonce,
   };
-    // define transaction method
-  const transaction: SubmittableExtrinsic<'promise'> = api.tx.balances.transfer(to, amount);
+  // define transaction method
+  const transaction: SubmittableExtrinsic<"promise"> = api.tx.balances.transfer(
+    to,
+    amount
+  );
 
   // create SignerPayload
-  const signerPayload = api.createType('SignerPayload', {
+  const signerPayload = api.createType("SignerPayload", {
     genesisHash: api.genesisHash,
     runtimeVersion: api.runtimeVersion,
     version: api.extrinsicVersion,
@@ -35,9 +44,8 @@ export async function generateTransactionPayload(
     transactionVersion: transaction.version,
   });
 
-
   return {
     payload: signerPayload.toPayload(),
-    tx: transaction.toHex()
+    tx: transaction.toHex(),
   };
 }
