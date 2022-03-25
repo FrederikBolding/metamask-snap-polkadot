@@ -7,7 +7,6 @@ module.exports = {
     bundler.transform(
       (file, opts) => {
         let data = "";
-        console.log(file);
         // eslint-disable-next-line @typescript-eslint/no-use-before-define
         return through(write, end);
 
@@ -16,7 +15,7 @@ module.exports = {
         }
         function end() {
           const replaced = data.replace(
-            "import.meta && import.meta.url ? new URL('.', import.meta.url).pathname : 'auto'",
+            "import.meta && import.meta.url ? new URL(import.meta.url).pathname.substring(0, new URL(import.meta.url).pathname.lastIndexOf('/') + 1) : 'auto'",
             "'auto'"
           );
           this.queue(replaced);

@@ -13,7 +13,7 @@ let isConnecting: boolean;
 async function initApi(wsRpcUrl: string): Promise<ApiPromise> {
   provider = new WsProvider(wsRpcUrl);
   const api = await ApiPromise.create({
-    initWasm: false,
+    initWasm: true,
     provider,
     // this seems not to make any difference anymore
     types: {

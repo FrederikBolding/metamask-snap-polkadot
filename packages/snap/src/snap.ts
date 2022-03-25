@@ -1,3 +1,4 @@
+import '@polkadot/wasm-crypto/initWasmAsm';
 import { EmptyMetamaskState, MetamaskState, Wallet } from "./interfaces";
 import { getPublicKey } from "./rpc/getPublicKey";
 import { exportSeed } from "./rpc/exportSeed";
