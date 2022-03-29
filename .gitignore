@@ -4,3 +4,6 @@ build
 *.log
 bundle
 node_modules
+.DS_Store
+packages/.DS_Store
+packages/snap/.DS_Store
