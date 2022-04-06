@@ -23,7 +23,7 @@ export function hasMetaMask(): boolean {
 }
 
 export const origin = new URL('package.json', 'http://localhost:8081').toString();
-export const pluginOrigin = `wallet_plugin_${origin}`;
+export const pluginOrigin = `${origin}`;
 
 export async function installPolkadotSnap(): Promise<boolean> {
     try {

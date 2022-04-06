@@ -1,13 +1,18 @@
-import {Wallet} from "../interfaces";
+import { Wallet } from "../interfaces";
 import deepmerge from "deepmerge";
-import {getDefaultConfiguration} from "../configuration";
-import {SnapConfig} from "@chainsafe/metamask-polkadot-types";
+import { getDefaultConfiguration } from "../configuration";
+import { SnapConfig } from "@chainsafe/metamask-polkadot-types";
+import { updateState, getState } from "../util/manageState";
 
-export function configure(wallet: Wallet, networkName: string, overrides: unknown): SnapConfig {
+export async function configure(
+  wallet: Wallet,
+  networkName: string,
+  overrides: unknown
+): Promise<SnapConfig> {
   const defaultConfig = getDefaultConfiguration(networkName);
   const configuration = deepmerge(defaultConfig, overrides);
-  const state = wallet.getPluginState();
+  const state = await getState(wallet);
   state.polkadot.config = configuration;
-  wallet.updatePluginState(state);
+  updateState(wallet, state);
   return configuration;
 }

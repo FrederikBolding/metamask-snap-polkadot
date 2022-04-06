@@ -1,28 +1,44 @@
-import {EmptyMetamaskState, Wallet} from "./interfaces";
-import {getPublicKey} from "./rpc/getPublicKey";
-import {exportSeed} from "./rpc/exportSeed";
-import {getBalance} from "./rpc/substrate/getBalance";
-import {getAddress} from "./rpc/getAddress";
-import ApiPromise from "@polkadot/api/promise";
-import {getTransactions} from "./rpc/substrate/getTransactions";
-import {getBlock} from "./rpc/substrate/getBlock";
-import {updateAsset} from "./asset";
-import {getApi, resetApi} from "./polkadot/api";
-import {configure} from "./rpc/configure";
-import {getPolkadotEventEmitter, getTxEventEmitter} from "./polkadot/events";
-import {registerOnBalanceChange, removeOnBalanceChange} from "./polkadot/events/balance";
-import {HexHash, PolkadotApi, PolkadotEventCallback, TxEventCallback} from "@chainsafe/metamask-polkadot-types";
-import {signPayloadJSON, signPayloadRaw} from "./rpc/substrate/sign";
-import {generateTransactionPayload} from "./rpc/generateTransactionPayload";
-import {send} from "./rpc/send";
+import '@polkadot/wasm-crypto/initWasmAsm';
+import { EmptyMetamaskState, MetamaskState, Wallet } from "./interfaces";
+import { getPublicKey } from "./rpc/getPublicKey";
+import { exportSeed } from "./rpc/exportSeed";
+import { getBalance } from "./rpc/substrate/getBalance";
+import { getAddress } from "./rpc/getAddress";
+import { ApiPromise } from "@polkadot/api/promise";
+import { getTransactions } from "./rpc/substrate/getTransactions";
+import { getBlock } from "./rpc/substrate/getBlock";
+import { updateAsset } from "./asset";
+import { getApi, resetApi } from "./polkadot/api";
+import { configure } from "./rpc/configure";
+import { getPolkadotEventEmitter, getTxEventEmitter } from "./polkadot/events";
+import {
+  registerOnBalanceChange,
+  removeOnBalanceChange,
+} from "./polkadot/events/balance";
+import {
+  HexHash,
+  PolkadotApi,
+  PolkadotEventCallback,
+  TxEventCallback,
+} from "@chainsafe/metamask-polkadot-types";
+import { signPayloadJSON, signPayloadRaw } from "./rpc/substrate/sign";
+import { generateTransactionPayload } from "./rpc/generateTransactionPayload";
+import { send } from "./rpc/send";
+import { getState, updateState } from "./util/manageState";
 
 declare let wallet: Wallet;
 
 const apiDependentMethods = [
-  "getBlock", "getBalance", "getChainHead", "signPayloadJSON", "signPayloadRaw", "generateTransactionPayload", "send"
+  "getBlock",
+  "getBalance",
+  "getChainHead",
+  "signPayloadJSON",
+  "signPayloadRaw",
+  "generateTransactionPayload",
+  "send",
 ];
 
-wallet.registerApiRequestHandler(async function (origin: URL): Promise<PolkadotApi> {
+/**wallet.registerApiRequestHandler(async function (origin: URL): Promise<PolkadotApi> {
   return {
     subscribeToBalance: (callback: PolkadotEventCallback): void => {
       const eventEmitter = getPolkadotEventEmitter(origin.hostname);
@@ -52,13 +68,13 @@ wallet.registerApiRequestHandler(async function (origin: URL): Promise<PolkadotA
       }
     }
   };
-});
+});**/
 
 wallet.registerRpcMessageHandler(async (originString, requestObject) => {
-  const state = wallet.getPluginState();
+  const state = await getState(wallet);
   if (!state) {
     // initialize state if empty and set default config
-    wallet.updatePluginState(EmptyMetamaskState());
+    updateState(wallet, EmptyMetamaskState());
   }
   // fetch api promise
   let api: ApiPromise = null;
@@ -70,30 +86,33 @@ wallet.registerRpcMessageHandler(async (originString, requestObject) => {
       return await signPayloadJSON(wallet, api, requestObject.params.payload);
     case "signPayloadRaw":
       return await signPayloadRaw(wallet, api, requestObject.params.payload);
-    case 'getPublicKey':
+    case "getPublicKey":
       return await getPublicKey(wallet);
-    case 'getAddress':
+    case "getAddress":
       return await getAddress(wallet);
-    case 'exportSeed':
+    case "exportSeed":
       return await exportSeed(wallet);
-    case 'getAllTransactions':
+    case "getAllTransactions":
       return await getTransactions(wallet);
-    case 'getBlock':
+    case "getBlock":
       return await getBlock(requestObject.params.blockTag, api);
-    case 'getBalance': {
+    case "getBalance": {
       const balance = await getBalance(wallet, api);
       await updateAsset(wallet, originString, balance);
       return balance;
     }
-    case 'configure': {
-      const isInitialConfiguration = wallet.getPluginState().polkadot.config === null;
+    case "configure": {
+      const isInitialConfiguration =
+        (await getState(wallet)).polkadot.config === null;
       // reset api and remove asset only if already configured
       if (!isInitialConfiguration) {
         resetApi();
       }
       // set new configuration
       const configuration = configure(
-        wallet, requestObject.params.configuration.networkName, requestObject.params.configuration
+        wallet,
+        requestObject.params.configuration.networkName,
+        requestObject.params.configuration
       );
       // initialize api with new configuration
       api = await getApi(wallet);
@@ -103,13 +122,23 @@ wallet.registerRpcMessageHandler(async (originString, requestObject) => {
       return configuration;
     }
     case "generateTransactionPayload":
-      return await generateTransactionPayload(wallet, api, requestObject.params.to, requestObject.params.amount);
+      return await generateTransactionPayload(
+        wallet,
+        api,
+        requestObject.params.to,
+        requestObject.params.amount
+      );
     case "send":
-      return await send(wallet, api, requestObject.params.signature, requestObject.params.txPayload);
-    case 'getChainHead':
+      return await send(
+        wallet,
+        api,
+        requestObject.params.signature,
+        requestObject.params.txPayload
+      );
+    case "getChainHead":
       const head = await api.rpc.chain.getFinalizedHead();
       return head.hash;
     default:
-      throw new Error('Method not found.');
+      throw new Error("Method not found.");
   }
 });

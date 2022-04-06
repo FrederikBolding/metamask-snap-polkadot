@@ -1,17 +1,26 @@
-import {Wallet} from "../interfaces";
-import {Transaction} from "@chainsafe/metamask-polkadot-types";
+import { Wallet } from "../interfaces";
+import { Transaction } from "@chainsafe/metamask-polkadot-types";
+import { getState, updateState } from "../util/manageState";
 
-export function saveTxToState(wallet: Wallet, tx: Transaction): void {
-  const state = wallet.getPluginState();
+export async function saveTxToState(
+  wallet: Wallet,
+  tx: Transaction
+): Promise<void> {
+  const state = await getState(wallet);
   state.polkadot.transactions.push(tx);
-  wallet.updatePluginState(state);
+  await updateState(wallet, state);
 }
 
-export function updateTxInState(wallet: Wallet, transaction: Transaction) {
-  const state = wallet.getPluginState();
-  const index = state.polkadot.transactions.findIndex(tx => tx.hash === transaction.hash);
+export async function updateTxInState(
+  wallet: Wallet,
+  transaction: Transaction
+): Promise<void> {
+  const state = await getState(wallet);
+  const index = state.polkadot.transactions.findIndex(
+    (tx) => tx.hash === transaction.hash
+  );
   if (index >= 0) {
     state.polkadot.transactions[index] = transaction;
-    wallet.updatePluginState(state);
+    await updateState(wallet, state);
   }
 }

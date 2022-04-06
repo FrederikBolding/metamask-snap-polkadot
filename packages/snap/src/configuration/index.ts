@@ -1,6 +1,11 @@
-import {Wallet} from "../interfaces";
-import {defaultConfiguration, kusamaConfiguration, westendConfiguration} from "./predefined";
-import {SnapConfig} from "@chainsafe/metamask-polkadot-types";
+import { Wallet } from "../interfaces";
+import {
+  defaultConfiguration,
+  kusamaConfiguration,
+  westendConfiguration,
+} from "./predefined";
+import { SnapConfig } from "@chainsafe/metamask-polkadot-types";
+import { getState } from "../util/manageState";
 
 export function getDefaultConfiguration(networkName: string): SnapConfig {
   switch (networkName) {
@@ -15,8 +20,8 @@ export function getDefaultConfiguration(networkName: string): SnapConfig {
   }
 }
 
-export function getConfiguration(wallet: Wallet): SnapConfig {
-  const state = wallet.getPluginState();
+export async function getConfiguration(wallet: Wallet): Promise<SnapConfig> {
+  const state = await getState(wallet);
   if (!state || !state.polkadot.config) {
     return defaultConfiguration;
   }

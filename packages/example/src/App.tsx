@@ -9,7 +9,7 @@ function App() {
         injectMetamaskPolkadotSnapProvider(
             "westend",
             undefined,
-            "http://localhost:8081/package.json"
+            "local:http://localhost:8081"
         );
     }, [])
 

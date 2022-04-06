@@ -105,8 +105,7 @@
   </body>
 
   <script>
-    const origin = new URL('package.json', window.location.href).toString();
-    const snapId = `wallet_plugin_${origin}`;
+    const snapId = `local:${window.location.href}`;
 
     async function test() {
       index = await ethereum.requestIndex();
@@ -166,9 +165,9 @@
 
     async function loadConfiguration() {
       try {
-        const c = await ethereum.send({
-          method: snapId,
-          params: [{
+        const c = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: [snapId, {
             method: 'configure',
             params: {
               configuration: {
@@ -192,9 +191,9 @@
 
     async function removeAsset() {
       try {
-        await ethereum.send({
-          method: snapId,
-          params: [{
+        await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: [snapId, {
             method: 'removeKusamaAsset'
           }]
         });
@@ -205,9 +204,9 @@
 
     async function createAsset() {
       try {
-        await ethereum.send({
-          method: snapId,
-          params: [{
+        await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: [snapId, {
             method: 'addKusamaAsset'
           }]
         });
@@ -219,9 +218,9 @@
     async function findBlock() {
       let block = null;
       try {
-        block = await ethereum.send({
-          method: snapId,
-          params: [{
+        block = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: [snapId, {
             method: 'getBlock',
             params: {
               blockTag: blockTagInput.value
@@ -250,9 +249,9 @@
     async function exportSeed() {
       let response = null;
       try {
-        response = await ethereum.send({
-          method: snapId,
-          params: [{
+        response = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: [snapId, {
             method: 'exportSeed'
           }]
         });
@@ -271,9 +270,9 @@
     async function fetchPublicKey() {
       let response = null;
       try {
-        response = await ethereum.send({
-          method: snapId,
-          params: [{
+        response = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: [snapId, {
             method: 'getPublicKey'
           }]
         });
@@ -291,9 +290,9 @@
     async function fetchAddress() {
       let response = null;
       try {
-        response = await ethereum.send({
-          method: snapId,
-          params: [{
+        response = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: [snapId, {
             method: 'getAddress'
           }]
         });
@@ -310,10 +309,10 @@
     async function connectSnap () {
       console.log(snapId);
       try {
-        await ethereum.send({
+        await ethereum.request({
           method: 'wallet_enable',
           params: [{
-            [snapId]: {}
+            wallet_snap: { [snapId]: {} },
           }]
         });
       } catch (e) {
@@ -325,9 +324,9 @@
 
       let payload = null;
       try {
-        payload = await ethereum.send({
-          method: snapId,
-          params: [{
+        payload = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: [snapId, {
             method: 'generateTransactionPayload',
             params: {
               amount: "10",
@@ -343,9 +342,9 @@
 
       let signature = null;
       try {
-        signature = await ethereum.send({
-          method: snapId,
-          params: [{
+        signature = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: [snapId, {
             method: 'signPayloadJSON',
             params: {
               payload: payload
@@ -360,9 +359,9 @@
 
       let tx = null;
       try {
-        tx = await ethereum.send({
-          method: snapId,
-          params: [{
+        tx = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: [snapId, {
             method: 'send',
             params: {
               signature: signature,
@@ -385,9 +384,9 @@
     async function getChainHead() {
       let response = null;
       try {
-        response = await ethereum.send({
-          method: snapId,
-          params: [{
+        response = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: [snapId, {
             method: 'getChainHead'
           }]
         });
@@ -404,9 +403,9 @@
     async function getBalance() {
       let response = null;
       try {
-        response = await ethereum.send({
-          method: snapId,
-          params: [{
+        response = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: [snapId, {
             method: 'getBalance'
           }]
         });
@@ -423,9 +422,9 @@
     async function getAllTransactions() {
       let response = null;
       try {
-        response = await ethereum.send({
-          method: snapId,
-          params: [{
+        response = await ethereum.request({
+          method: 'wallet_invokeSnap',
+          params: [snapId, {
             method: 'getAllTransactions',
             params: {
               address: "Dc6ouAsLFYLF7kCfAbW6j6kVN1FvoKcyAuTr1NCKmU2c8mk"
