@@ -8,37 +8,57 @@
 
 Metamask snap (plugin) to enable Metamask users interaction with Polkadot dapps.
 
-### Documentation
+### Requirements
 
-Go to [wiki](https://github.com/chainsafe/metamask-snap-polkadot/wiki) for detailed documentation on Polkadot snap.
+- [nvm](https://github.com/nvm-sh/nvm)
+- [Metamask Flask](https://metamask.io/flask/) Download and add this as an extension to your chrome browser
 
-Here you can find described [integration process](https://github.com/chainsafe/metamask-snap-polkadot/wiki#integration) and full [snap API documentation](https://github.com/chainsafe/metamask-snap-polkadot/wiki/API-Documentation).
+### Building
+
+- Clone [this](https://github.com/BSS-Metamask/metamask-snap-polkadot) repository
+  ```
+  git clone https://github.com/BSS-Metamask/metamask-snap-polkadot
+  ```
+- Switch to branch `fb/port-to-latest`
+  ```
+  cd metamask-snap-polkadot
+  git checkout fb/port-to-latest
+  ```
+- This project requires node version `>v14.0.0`
+  ```
+  nvm install v14.4.0
+  nvm use v14.0.0
+  ```
+- Install `yarn`
+  ```
+  npm install -g yarn
+  ```
+- Install Project Dependencies using `yarn`
+  ```
+  yarn install
+  ```
+- Build Project
+  ```
+  yarn build
+  ```
 
 ### Testing
 
-#### Metamask
-- [download latest Metamask snaps beta release](https://github.com/NodeFactoryIo/metamask-snaps-beta/releases) (chrome recommended)
-- extract downloaded archive
-- go to [chrome://extensions/](chrome://extensions/)
-- enable "Developer mode"
-- click "Load unpacked" and point to extracted archive chrome directory
+- Setup your wallet in Metamask Flask
 
-#### Extension
-- `yarn install`
-- `yarn run demo`
+- Start the snap
+  ```
+  yarn run start:snap
+  ```
 
+- Using the Dapp
+  - Open Chrome
+  - Goto URL `localhost:8081`
+  - In the webpage displayed, click on `Connect polkadot snap`
+  - Click `Connect` in the Metamask popup to accept permission requested by the snap
 
-### License
-Copyright [2020] [ChainSafe Systems]
+### Contributing
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-   http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+- If you modify any snap source file (*.ts) , you must update the `Base64` encoded `SHA256` hash of the
+  `metamask-snap-polkadot/packages/snap/dist/bundle.js` file in `metamask-snap-polkadot/packages/snap/snap.manifest.json` before pushing your commit
+  
