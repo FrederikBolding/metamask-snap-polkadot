@@ -19,10 +19,10 @@ Metamask snap (plugin) to enable Metamask users interaction with Polkadot dapps.
   ```
   git clone https://github.com/BSS-Metamask/metamask-snap-polkadot
   ```
-- Switch to branch `fb/port-to-latest`
+- Switch to branch `Spring2022_UT_BSS`
   ```
   cd metamask-snap-polkadot
-  git checkout fb/port-to-latest
+  git checkout Spring2022_UT_BSS
   ```
 - This project requires node version `>v14.0.0`
   ```
